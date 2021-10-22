@@ -22,7 +22,6 @@ public class CRUDResource {
 	@POST
     @Path("/UserQuestionnaire")
     public Response UserQuestionnaire(RequestBody requestBody) {
-		System.out.println(requestBody);
     	return Questionnaire.CRUDService(requestBody);
     }
 

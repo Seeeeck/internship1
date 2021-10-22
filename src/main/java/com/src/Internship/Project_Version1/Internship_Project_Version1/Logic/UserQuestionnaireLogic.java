@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.Response;
@@ -101,7 +100,6 @@ public class UserQuestionnaireLogic {
 		String sql = "INSERT INTO userregistrationapi VALUES(?,?,?,?,?,?,?,?,?,?)";
 		try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 			PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-			System.out.println(id);
 			setStatement(preparedStatement,requestBody,id);
 			preparedStatement.executeUpdate();
 			System.out.println("GeneratedbConnectionInsert:正常終了");
