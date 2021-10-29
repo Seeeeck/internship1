@@ -1,7 +1,6 @@
 package com.src.Internship.Project_Version1.Internship_Project_Version1.Logic;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,14 +12,11 @@ import javax.ws.rs.core.Response;
 import com.src.Internship.Project.Internship_Project.Entity.RequestBody;
 import com.src.Internship.Project_Version1.InternshipProject_Version1.ResponseCommon.ResponseCommon;
 import com.src.Internship.Project_Version1.InternshipProject_Version1.ResponseCommon.ResponseDetails;
+import com.src.Internship.Project_Version1.Internship_Project_Version1.Util.DatabaseHolder;
 import com.src.Internship.Project_Version1.Internship_Project_Version1.Util.StringUtil;
 
 @RequestScoped
 public class UserQuestionnaireLogic {
-
-	private final static String URL = "jdbc:postgresql://localhost:5432/UserRegistrationAPI"; //PostgreSQL接続情報（タイプ：URL）
-	private final static String USER = "postgres"; //PostgreSQL接続情報（タイプ：PostgreSQLログインユーザー名）
-	private final static String PASSWORD = "123456"; //PostgreSQL接続情報（タイプ：PostgreSQLログインパスワード）
 
 	
 	public UserQuestionnaireLogic() {
@@ -28,7 +24,7 @@ public class UserQuestionnaireLogic {
 
 	
 	public Response CRUDService(RequestBody requestBody) {
-		if(RequestBodyCheck(requestBody)) {
+		if(isBadRequest(requestBody)) {
 			return GenerateResponse(ResponseCommon.BAD_REQUEST);
 		}
 		System.out.println("RequestBodyCheck:正常終了");
@@ -42,7 +38,10 @@ public class UserQuestionnaireLogic {
 		}
 	}
 	
-	private boolean RequestBodyCheck(RequestBody body) {
+	private boolean isBadRequest(RequestBody body) {
+		if (body == null){
+			return true;
+		}
 		boolean badRequest = StringUtil.isEmpty(body.getSex()) ||
 				StringUtil.isEmpty(body.getAge()) ||
 				StringUtil.isEmpty(body.getUsername()) ||
@@ -68,7 +67,7 @@ public class UserQuestionnaireLogic {
 	}
 	
 	private String GenerateddbConnectionGetseqId() throws SQLException {
-		try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		try(Connection connection = DatabaseHolder.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement("SELECT NEXTVAL('questionnaireseqno')");
 					ResultSet resultset = preparedStatement.executeQuery()){
 			resultset.next();
@@ -98,7 +97,7 @@ public class UserQuestionnaireLogic {
 	 */
 	private Response GeneratedbConnectionInsert(RequestBody requestBody,String id) {
 		String sql = "INSERT INTO userregistrationapi VALUES(?,?,?,?,?,?,?,?,?,?)";
-		try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		try(Connection connection = DatabaseHolder.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sql)){
 			setStatement(preparedStatement,requestBody,id);
 			preparedStatement.executeUpdate();
